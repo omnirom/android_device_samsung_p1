@@ -31,6 +31,7 @@ exit 2
 esac
 
 if [ "$model" != "p1" ] ; then
+rm /tmp/boot.img
 mv /tmp/boot_$model.img /tmp/boot.img
 fi
 
