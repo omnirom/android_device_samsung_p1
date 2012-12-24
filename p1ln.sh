@@ -1,4 +1,6 @@
-HW=$(getprop ro.hardware | tr '[A-Z]' '[a-z]')
+#!/tmp/busybox sh
+
+HW=$(cat /proc/cpuinfo | grep Hardware | sed s/Hardware// | tr '[A-Z]' '[a-z]' | tr -d ' ' | tr -d ':' | tr -d '\t')
 DEVICE=$(cat /default.prop | grep ro.cm.device | sed s#ro\.cm\.device=## | tr '[A-Z]' '[a-z]')
 
 case $HW in
