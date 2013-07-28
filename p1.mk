@@ -53,11 +53,8 @@ PRODUCT_COPY_FILES += \
 	device/samsung/p1/ueventd.p1.rc:root/ueventd.p1.rc \
 	device/samsung/p1-common/init.recovery.rc:root/init.recovery.p1.rc \
 	device/samsung/p1/init.p1.usb.rc:root/init.p1.usb.rc \
-	device/samsung/p1/init.p1.usb.rc:recovery/root/usb.rc
-
-# vold
-PRODUCT_COPY_FILES += \
-        device/samsung/p1/prebuilt/etc/vold.fstab:system/etc/vold.fstab
+	device/samsung/p1/init.p1.usb.rc:recovery/root/usb.rc \
+	device/samsung/p1/fstab.p1:root/fstab.p1
 
 # RIL
 # Permissions
@@ -83,9 +80,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
        rild.libpath=/system/lib/libsec-ril.so \
        rild.libargs=-d/dev/ttyS0 \
        ro.phone_storage=1 \
-       ro.additionalmounts=/storage/sdcard1 \
-       ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1 \
-       persist.sys.vold.switchexternal=1
+       ro.additionalmounts=/storage/sdcard1
 
 PRODUCT_COPY_FILES += \
 	device/samsung/p1/p1ln.sh:p1ln.sh

@@ -2,4 +2,5 @@
 #<src>                                                  <mnt_point>         <type>    <mnt_flags and options>                               <fs_mgr_flags>
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
-# empty for now, since nothing in here gets mounted :/
+/devices/platform/s3c-sdhci.0/mmc_host/mmc0    /storage/sdcard0    auto    defaults    voldmanaged=sdcard0:1,nonremovable
+/devices/platform/s3c-sdhci.2/mmc_host/mmc1    /storage/sdcard1    auto    defaults    voldmanaged=sdcard1:auto

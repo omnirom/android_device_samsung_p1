@@ -25,8 +25,7 @@ on fs
     mount ext4 /dev/block/mmcblk0p2 /data
     mount ext4 /dev/block/mmcblk0p3 /cache
 
-    #FIXME: nothing in fstab gets mounted
-    #mount_all /fstab.p1
+    mount_all /fstab.p1
 
     chown radio radio /radio/modem.bin
 
