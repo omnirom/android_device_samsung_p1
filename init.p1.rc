@@ -28,14 +28,46 @@ on fs
     mount_all /fstab.p1
 
     chown radio radio /radio/modem.bin
+    restorecon /radio
+    restorecon /radio/modem.bin
 
     # set permissions for files in /efs
     chown radio radio /efs
-    chmod 770 /efs/bluetooth
+    chmod 770 /efs
     chmod 770 /efs/imei
+    exec /system/bin/restorecon -r /efs
 
     # set permissions for files in /radio
     chown radio radio /radio/modem.bin
+
+# permission for tuning knobs
+    chown system system /sys/class/misc/pwm_duty/pwm_duty
+    chmod 660 /sys/class/misc/pwm_duty/pwm_duty
+    restorecon /sys/class/misc/pwm_duty/pwm_duty
+
+# Intentionally left world-writable for Voodoo Sound app
+    restorecon /sys/devices/virtual/misc/voodoo_sound/adc_osr128
+    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_direct
+    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_osr128
+    restorecon /sys/devices/virtual/misc/voodoo_sound/debug_log
+    restorecon /sys/devices/virtual/misc/voodoo_sound/digital_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fll_tuning
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_normalize_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_bass
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_highs
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_amplifier_level
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b1_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b2_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b3_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b4_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b5_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_bands_values
+    restorecon /sys/devices/virtual/misc/voodoo_sound/mono_downmix
+    restorecon /sys/devices/virtual/misc/voodoo_sound/recording_preset
+    restorecon /sys/devices/virtual/misc/voodoo_sound/speaker_tuning
+    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion
+    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion_gain
 
 on post-fs
 
