@@ -8,6 +8,8 @@ on init
 
     mkdir /storage/sdcard0 0000 root root
     mkdir /storage/sdcard1 0000 root root
+    mkdir /mnt/media_rw/sdcard0 0000 system system
+    mkdir /mnt/media_rw/sdcard1 0000 system system
     # for backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard0 /sdcard
@@ -154,6 +156,15 @@ service gpsd /system/vendor/bin/gpsd -c /system/vendor/etc/gps.xml
     socket gps seqpacket 0660 gps system
     user gps system
     group system inet
+
+# FUSE sdcard daemon for rich permissions (runs as media_rw)
+service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+    class late_start
+    disabled
+
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
 
 # --------------------------------------------------------------------------------------
 # GT-P1000L (p1l) only
