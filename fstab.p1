@@ -8,5 +8,5 @@ radio                       /radio              mtd         defaults    recovery
 /dev/block/mmcblk0p2        /data               ext4        defaults    recoveryonly
 /dev/block/mmcblk0p3        /cache              ext4        defaults    recoveryonly
 system                      /system             yaffs2      defaults    recoveryonly
-/devices/platform/s3c-sdhci.0/mmc_host/mmc0    /storage/sdcard0    auto    defaults    voldmanaged=sdcard0:1,nonremovable
-/devices/platform/s3c-sdhci.2/mmc_host/mmc1    /storage/sdcard1    auto    defaults    voldmanaged=sdcard1:auto
+/devices/platform/s3c-sdhci.0/mmc_host/mmc0    auto    auto    defaults    voldmanaged=sdcard0:1,nonremovable
+/devices/platform/s3c-sdhci.2/mmc_host/mmc1    auto    auto    defaults    voldmanaged=sdcard1:auto
