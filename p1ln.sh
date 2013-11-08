@@ -1,7 +1,7 @@
 #!/tmp/busybox sh
 
-HW=$(cat /proc/cpuinfo | grep Hardware | sed s/Hardware// | tr '[A-Z]' '[a-z]' | tr -d ' ' | tr -d ':' | tr -d '\t')
-DEVICE=$(cat /default.prop | grep ro.cm.device | sed s#ro\.cm\.device=## | tr '[A-Z]' '[a-z]')
+HW=$(/tmp/busybox cat /proc/cpuinfo | /tmp/busybox grep Hardware | /tmp/busybox sed s/Hardware// | /tmp/busybox tr '[A-Z]' '[a-z]' | /tmp/busybox tr -d ' ' | /tmp/busybox tr -d ':' | /tmp/busybox tr -d '\t')
+DEVICE=$(/tmp/busybox cat /default.prop | /tmp/busybox grep ro.cm.device | /tmp/busybox sed s#ro\.cm\.device=## | /tmp/busybox tr '[A-Z]' '[a-z]')
 
 case $HW in
 p1|gt-p1000)
@@ -30,8 +30,8 @@ esac
 fi
 
 if [ "$model" != "p1" ] ; then
-rm /tmp/boot.img
-mv /tmp/boot_$model.img /tmp/boot.img
+/tmp/busybox rm /tmp/boot.img
+/tmp/busybox mv /tmp/boot_$model.img /tmp/boot.img
 fi
 
 exit 0
