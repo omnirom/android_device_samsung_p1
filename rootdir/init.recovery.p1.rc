@@ -1,0 +1,16 @@
+import usb.rc # Renamed init.p1.usb.rc, we can't use init*.rc because the build script will delete it
+
+on init
+
+    export PATH /sbin
+    export LD_LIBRARY_PATH .:/sbin
+
+    # legacy symlink
+    rmdir /external_sd
+    symlink /storage/sdcard1 /external_sd
+
+    # touch rotate
+    write /sys/devices/platform/s3c2440-i2c.2/i2c-2/2-004a/pivot 0
+on boot
+    # mass_storage support
+    setprop sys.usb.config mass_storage,adb
