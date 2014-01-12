@@ -27,6 +27,8 @@ BOARD_CUSTOM_BOOTIMG_MK := device/samsung/p1/shbootimg.mk
 
 TARGET_OTA_ASSERT_DEVICE := GT-P1000,GT-P1000L,GT-P1000N,galaxytab,p1,p1l,p1n
 
+TARGET_RECOVERY_FSTAB := device/samsung/p1/fstab.p1
+
 # TWRP
 TW_INTERNAL_STORAGE_PATH        := "/sdcard"
 TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard"

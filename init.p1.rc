@@ -8,6 +8,8 @@ on init
 
     mkdir /storage/sdcard0 0000 root root
     mkdir /storage/sdcard1 0000 root root
+    mkdir /mnt/media_rw/sdcard0 0000 system system
+    mkdir /mnt/media_rw/sdcard1 0000 system system
     # for backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard0 /sdcard
@@ -25,18 +27,49 @@ on fs
     mount ext4 /dev/block/mmcblk0p2 /data
     mount ext4 /dev/block/mmcblk0p3 /cache
 
-    #FIXME: nothing in fstab gets mounted
-    #mount_all /fstab.p1
+    mount_all /fstab.p1
 
     chown radio radio /radio/modem.bin
+    restorecon /radio
+    restorecon /radio/modem.bin
 
     # set permissions for files in /efs
     chown radio radio /efs
-    chmod 770 /efs/bluetooth
+    chmod 770 /efs
     chmod 770 /efs/imei
+    exec /system/bin/restorecon -r /efs
 
     # set permissions for files in /radio
     chown radio radio /radio/modem.bin
+
+# permission for tuning knobs
+    chown system system /sys/class/misc/pwm_duty/pwm_duty
+    chmod 660 /sys/class/misc/pwm_duty/pwm_duty
+    restorecon /sys/class/misc/pwm_duty/pwm_duty
+
+# Intentionally left world-writable for Voodoo Sound app
+    restorecon /sys/devices/virtual/misc/voodoo_sound/adc_osr128
+    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_direct
+    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_osr128
+    restorecon /sys/devices/virtual/misc/voodoo_sound/debug_log
+    restorecon /sys/devices/virtual/misc/voodoo_sound/digital_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fll_tuning
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_normalize_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_bass
+    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_highs
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_amplifier_level
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b1_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b2_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b3_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b4_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b5_gain
+    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_bands_values
+    restorecon /sys/devices/virtual/misc/voodoo_sound/mono_downmix
+    restorecon /sys/devices/virtual/misc/voodoo_sound/recording_preset
+    restorecon /sys/devices/virtual/misc/voodoo_sound/speaker_tuning
+    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion
+    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion_gain
 
 on post-fs
 
@@ -124,26 +157,35 @@ service gpsd /system/vendor/bin/gpsd -c /system/vendor/etc/gps.xml
     user gps system
     group system inet
 
+# FUSE sdcard daemon for rich permissions (runs as media_rw)
+service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+    class late_start
+    disabled
+
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
+
 # --------------------------------------------------------------------------------------
 # GT-P1000L (p1l) only
 # --------------------------------------------------------------------------------------
 #
 # Latin MobileTV [ISDB-T]
 #
-service mobileTV /system/bin/broadcastProcessObserver
-    class main
-    user system
-    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-    disabled
+# service mobileTV /system/bin/broadcastProcessObserver
+#    class main
+#    user system
+#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+#    disabled
 
-service mtvmf /system/bin/mtvmfservice
-    class main
-    user system
-    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-    disabled
+# service mtvmf /system/bin/mtvmfservice
+#    class main
+#    user system
+#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+#    disabled
 
-service mtvmfrec /system/bin/mtvmfrecservice
-    class main
-    user system
-    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-    disabled
+# service mtvmfrec /system/bin/mtvmfrecservice
+#    class main
+#    user system
+#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
+#    disabled
