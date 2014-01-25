@@ -52,8 +52,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 # P1 Init files
 PRODUCT_COPY_FILES += \
 	device/samsung/p1/rootdir/init.p1.rc:root/init.p1.rc \
-	device/samsung/p1/rootdir/ueventd.p1.rc:root/ueventd.p1.rc \
-	device/samsung/p1/rootdir/init.recovery.p1.rc:root/init.recovery.p1.rc \
+	device/samsung/p1-common/rootdir/ueventd.rc:root/ueventd.p1.rc \
+	device/samsung/p1-common/rootdir/init.recovery.rc:root/init.recovery.p1.rc \
 	device/samsung/p1/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
 	device/samsung/p1/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
 	device/samsung/p1/fstab.p1:root/fstab.p1
