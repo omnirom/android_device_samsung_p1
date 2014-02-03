@@ -92,12 +92,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.phone_storage=1 \
     ro.additionalmounts=/storage/sdcard1
 
-# Galaxy Tab uses high-density artwork where available
-PRODUCT_LOCALES += hdpi
-
-# Screen size is "large" 7'tablet, density is "hdpi"
-PRODUCT_AAPT_CONFIG := large hdpi
-
 # Set here product definitions that valid for all p1 products
 PRODUCT_BRAND := Samsung
 PRODUCT_MANUFACTURER := Samsung
