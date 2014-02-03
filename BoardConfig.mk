@@ -33,6 +33,3 @@ TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
 # TARGET_USE_HWDECODING_TVOUT := true
 
 # TARGET_SEC_OMX_BIG_MMAP_BUFFER_SIZE := true
-
-# Vold
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/s3c-usbgadget/gadget/lun%d/file"
