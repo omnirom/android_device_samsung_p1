@@ -51,29 +51,30 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # P1 Init files
 PRODUCT_COPY_FILES += \
-	device/samsung/p1/rootdir/init.p1.rc:root/init.p1.rc \
-	device/samsung/p1-common/rootdir/ueventd.rc:root/ueventd.p1.rc \
-	device/samsung/p1-common/rootdir/init.recovery.rc:root/init.recovery.p1.rc \
-	device/samsung/p1/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
-	device/samsung/p1/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
-	device/samsung/p1/fstab.p1:root/fstab.p1
+    device/samsung/p1/rootdir/init.p1.rc:root/init.p1.rc \
+    device/samsung/p1-common/rootdir/ueventd.rc:root/ueventd.p1.rc \
+    device/samsung/p1-common/rootdir/init.recovery.rc:root/init.recovery.p1.rc \
+    device/samsung/p1/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
+    device/samsung/p1/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
+    device/samsung/p1/fstab.p1:root/fstab.p1 \
+    device/samsung/p1/p1ln.sh:p1ln.sh
 
 # TWRP
 PRODUCT_COPY_FILES += \
-	device/samsung/p1/twrp.fstab:recovery/root/etc/twrp.fstab
+    device/samsung/p1/twrp.fstab:recovery/root/etc/twrp.fstab
 
 # RIL
 # Permissions
 PRODUCT_COPY_FILES += \
-	frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
 
 # Device-specific packages
 PRODUCT_PACKAGES += \
-	SamsungServiceMode
+    SamsungServiceMode
 
 # Hdmi
 # PRODUCT_PACKAGES += \
-#	hdmi.s5pc110
+#    hdmi.s5pc110
 
 # Build.prop overrides
 PRODUCT_PROPERTY_OVERRIDES += \
