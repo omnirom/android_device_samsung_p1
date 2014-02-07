@@ -6,10 +6,10 @@ on init
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
 
-    mkdir /storage/sdcard0 0000 root root
-    mkdir /storage/sdcard1 0000 root root
-    mkdir /mnt/media_rw/sdcard0 0000 system system
-    mkdir /mnt/media_rw/sdcard1 0000 system system
+    mkdir /storage/sdcard0 0700 root root
+    mkdir /storage/sdcard1 0700 root root
+    mkdir /mnt/media_rw/sdcard0 0700 system system
+    mkdir /mnt/media_rw/sdcard1 0700 system system
     # for backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard0 /sdcard
