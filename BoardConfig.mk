@@ -21,9 +21,9 @@ include device/samsung/p1-common/BoardConfigCommon.mk
 # Board
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2010529792
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 477626368
-BOARD_CUSTOM_BOOTIMG_MK := device/samsung/p1-common/shbootimg.mk
+BOARD_CUSTOM_BOOTIMG_MK := device/samsung/p1/shbootimg.mk
 TARGET_RECOVERY_FSTAB := device/samsung/p1/fstab.p1
-TARGET_OTA_ASSERT_DEVICE := GT-P1000,p1,galaxytab
+TARGET_OTA_ASSERT_DEVICE := GT-P1000,GT-P1000L,GT-P1000N,galaxytab,p1,p1l,p1n,p1ln
 
 # TWRP
 TW_EXTERNAL_STORAGE_PATH := "/external_sd"
