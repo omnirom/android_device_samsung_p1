@@ -28,6 +28,7 @@ on fs
     mount ext4 /dev/block/mmcblk0p3 /cache
 
     mount_all /fstab.p1
+    swapon_all /fstab.p1
 
     chown radio radio /radio/modem.bin
     restorecon /radio
