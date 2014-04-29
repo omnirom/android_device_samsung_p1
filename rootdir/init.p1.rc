@@ -2,39 +2,58 @@ import init.p1-common.rc
 import init.p1.usb.rc
 
 on init
-
+    loglevel 9
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
 
+    # FIXME: Market checks this variable for space-checking
+             but downloads to /datadata
+    export DOWNLOAD_CACHE /data/download
+
+    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
     mkdir /storage/sdcard0 0700 root root
     mkdir /storage/sdcard1 0700 root root
-    mkdir /mnt/media_rw/sdcard0 0700 system system
-    mkdir /mnt/media_rw/sdcard1 0700 system system
-    # for backwards compability
-    symlink /storage/sdcard0 /mnt/sdcard
+
+    # for backwards compatibility
     symlink /storage/sdcard0 /sdcard
-    symlink /storage/sdcard1 /mnt/external_sd
+    symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard1 /external_sd
+    symlink /storage/sdcard1 /mnt/external_sd
+
+    mkdir /datadata 0771 system system
+
+    # we will create our own ril-daemon service in class 'core' because the
+    # rild doesn't like being killed. (During device encryption.)
+    stop ril-daemon
+
+on boot
+
+setprop ro.build.product p1
+setprop ro.product.device p1
 
 on fs
 
+    # set up lvm volumes
+    exec /lvm/sbin/lvm vgscan --mknodes --ignorelockingfailure
+    exec /lvm/sbin/lvm vgchange -aly --ignorelockingfailure
+    restorecon /dev/mapper/lvpool-system
+    restorecon /dev/mapper/lvpool-userdata
+
     mkdir /radio 0775 radio radio
-    mkdir /efs 0775 radio radio
-
-    mount yaffs2 mtd@efs /efs
     mount yaffs2 mtd@radio /radio
+    mount yaffs2 mtd@datadata /datadata
+    mount yaffs2 mtd@cache /cache
 
-    mount ext4 /dev/block/mmcblk0p2 /data
-    mount ext4 /dev/block/mmcblk0p3 /cache
-
-    mount_all /fstab.p1
-    swapon_all /fstab.p1
+    mount_all  fstab.p1
+    swapon_all fstab.p1
 
     chown radio radio /radio/modem.bin
-    restorecon /radio
-    restorecon /radio/modem.bin
+    exec /system/bin/restorecon -r /radio
 
     # set permissions for files in /efs
+    mkdir /efs 0775 radio radio
+    mount yaffs2 mtd@efs /efs
     chown radio radio /efs
     chmod 770 /efs
     chmod 770 /efs/imei
@@ -43,12 +62,12 @@ on fs
     # set permissions for files in /radio
     chown radio radio /radio/modem.bin
 
-# permission for tuning knobs
+    # permission for tuning knobs
     chown system system /sys/class/misc/pwm_duty/pwm_duty
     chmod 660 /sys/class/misc/pwm_duty/pwm_duty
     restorecon /sys/class/misc/pwm_duty/pwm_duty
 
-# Intentionally left world-writable for Voodoo Sound app
+    # Intentionally left world-writable for Voodoo Sound app
     restorecon /sys/devices/virtual/misc/voodoo_sound/adc_osr128
     restorecon /sys/devices/virtual/misc/voodoo_sound/dac_direct
     restorecon /sys/devices/virtual/misc/voodoo_sound/dac_osr128
@@ -74,11 +93,34 @@ on fs
 
 on post-fs
 
-    # symlink for SamsungRIL
+    chown system system /datadata
+    chmod 0771 /datadata
+    restorecon /datadata
+
+    # symlink for samsung ril
     symlink /radio/modem.bin /dev/block/bml12
 
-
 on post-fs-data
+
+    # for migrating download provider's cache out of the small /data/data
+    mkdir /data/data2 0771 system system
+
+    # download cache
+    mkdir /data/download 0770 system cache
+
+    # logs
+    mkdir /data/log 0775 root root
+    chmod 0775 /data/log
+
+    # setup datadata
+    exec /sbin/setupdatadata.sh
+
+    # ------
+    # COMMENT eaut: some of the permission settings might qualify for p1-common
+    #
+    # actually all the permission lines could be moved to ueventd.<hw>.rc
+    # since ueventd.rc has no "import" logic we need additional makefile glue to
+    # have all common stuff in p1-common and just the device specific stuff in p1/p1c
 
     # gps P1 only
     chown gps root /sys/class/sec/gps/GPS_PWR_EN/value
@@ -87,16 +129,9 @@ on post-fs-data
     chmod 660 /sys/class/sec/gps/GPS_nRST/value
 
     # sensors P1 only
-    # this needs to be fixed correctly, see: frameworks/base/services/sensorservice/SensorDevice.cp
-
+    # this needs to be fixed correctly
+    # see: frameworks/base/services/sensorservice/SensorDevice.cp
     write /sys/class/input/input5/enable 1  # enable lightsensor-level
-
-# ------
-# COMMENT eaut: some of the permission settings might qualify for p1-common
-#
-#               actually all the permission lines could be moved to ueventd.<hw>.rc
-#               since ueventd.rc has no "import" logic we need additional makefile glue to
-#               have all common stuff in p1-common and just the device specific stuff in p1/p1c
 
     # System server can control backlight brightness
     chmod 0664 /sys/class/lcd/s5p_lcd/lcd_power
@@ -107,7 +142,6 @@ on post-fs-data
     chmod 0775 /dev/socket
 
     # Permission changes
-
     chown system radio /sys/devices/platform/s3c2440-i2c.2/i2c-2/2-004a/update_fw
     chown system radio /sys/class/power_supply/battery/reset_soc
     chown system radio /sys/class/power_supply/battery/reset_cap
@@ -124,7 +158,6 @@ on post-fs-data
     chown system radio /sys/class/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
 
     # usb permission settings
-
     chmod 0664 /sys/devices/virtual/sec/switch/disable_vbus
     chmod 0664 /sys/devices/virtual/sec/switch/usb_state
     chmod 0664 /sys/devices/virtual/sec/switch/usb_sel
@@ -147,11 +180,6 @@ on post-fs-data
     chown system radio /sys/devices/platform/android_usb/AskOnStatus
     chown system radio /sys/devices/platform/android_usb/AskOnMenuSel
 
-on boot
-
-    setprop ro.build.product p1
-    setprop ro.product.device p1
-
 service gpsd /system/vendor/bin/gpsd -c /system/vendor/etc/gps.xml
     class main
     socket gps seqpacket 0660 gps system
@@ -166,27 +194,3 @@ service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
     disabled
-
-# --------------------------------------------------------------------------------------
-# GT-P1000L (p1l) only
-# --------------------------------------------------------------------------------------
-#
-# Latin MobileTV [ISDB-T]
-#
-# service mobileTV /system/bin/broadcastProcessObserver
-#    class main
-#    user system
-#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-#    disabled
-
-# service mtvmf /system/bin/mtvmfservice
-#    class main
-#    user system
-#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-#    disabled
-
-# service mtvmfrec /system/bin/mtvmfrecservice
-#    class main
-#    user system
-#    group system audio camera graphics inet net_bt net_bt_admin net_raw sdcard_rw
-#    disabled
