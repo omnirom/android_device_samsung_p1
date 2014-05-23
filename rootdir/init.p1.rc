@@ -4,17 +4,15 @@ import init.p1.usb.rc
 on init
 
     loglevel 9
+
+    mkdir /storage 0550 system sdcard_r
+    mkdir /storage/sdcard0 0555 root root
+    mkdir /storage/sdcard1 0775 system system
+    mkdir /mnt/media_rw/sdcard0 0775 system system
+    mkdir /mnt/media_rw/sdcard1 0775 system system
+
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
-
-    # FIXME: Market checks this variable for space-checking
-             but downloads to /datadata
-    export DOWNLOAD_CACHE /data/download
-
-    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
-    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
-    mkdir /storage/sdcard0 0700 root root
-    mkdir /storage/sdcard1 0700 root root
 
     # for backwards compatibility
     symlink /storage/sdcard0 /sdcard
@@ -23,6 +21,10 @@ on init
     symlink /storage/sdcard1 /mnt/external_sd
 
     mkdir /datadata 0771 system system
+
+    # FIXME: Market checks this variable for space-checking
+             but downloads to /datadata
+    export DOWNLOAD_CACHE /data/download
 
     # we will create our own ril-daemon service in class 'core' because the
     # rild doesn't like being killed. (During device encryption.)
