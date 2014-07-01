@@ -17,7 +17,7 @@
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/samsung/aries
-TARGET_KERNEL_CONFIG := custom_p1_defconfig
+TARGET_KERNEL_CONFIG := omni_p1_defconfig
 
 # Inherit from the common Open Source product configuration
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)

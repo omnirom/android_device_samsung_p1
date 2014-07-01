@@ -22,7 +22,7 @@ INSTALLED_P1LN_KERNEL_TARGET := $(PRODUCT_OUT)/kernel_p1ln
 
 KERNEL_P1LN_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_P1LN_OBJ
 KERNEL_P1LN_CONFIG := $(KERNEL_P1LN_OUT)/.config
-KERNEL_P1LN_DEFCONFIG := custom_p1ln_defconfig
+KERNEL_P1LN_DEFCONFIG := omni_p1ln_defconfig
 
 uncompressed_ramdisk := $(PRODUCT_OUT)/ramdisk.cpio
 $(uncompressed_ramdisk): $(INSTALLED_RAMDISK_TARGET)
