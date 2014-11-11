@@ -49,19 +49,21 @@ $(call inherit-product-if-exists, vendor/samsung/p1/p1-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
+LOCAL_PATH := device/samsung/p1
+
 # P1 Init files
 PRODUCT_COPY_FILES += \
-    device/samsung/p1/rootdir/init.p1.rc:root/init.p1.rc \
-    device/samsung/p1-common/rootdir/ueventd.rc:root/ueventd.p1.rc \
-    device/samsung/p1-common/rootdir/init.recovery.rc:root/init.recovery.p1.rc \
-    device/samsung/p1/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
-    device/samsung/p1/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
-    device/samsung/p1/fstab.p1:root/fstab.p1 \
-    device/samsung/p1/p1ln.sh:p1ln.sh
+    $(LOCAL_PATH)/rootdir/init.p1.rc:root/init.p1.rc \
+    $(LOCAL_PATH)/rootdir/ueventd.p1.rc:root/ueventd.p1.rc \
+    $(LOCAL_PATH)/rootdir/init.recovery.p1.rc:root/init.recovery.p1.rc \
+    $(LOCAL_PATH)/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
+    $(LOCAL_PATH)/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
+    $(LOCAL_PATH)/rootdir/fstab.p1:root/fstab.p1 \
+    $(LOCAL_PATH)/rootdir/p1ln.sh:p1ln.sh
 
 # TWRP
 PRODUCT_COPY_FILES += \
-    device/samsung/p1/twrp.fstab:recovery/root/etc/twrp.fstab
+    $(LOCAL_PATH)/rootdir/twrp.fstab:recovery/root/etc/twrp.fstab
 
 # RIL
 # Permissions

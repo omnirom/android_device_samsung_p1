@@ -1,0 +1,104 @@
+# graphics & camera
+/dev/pvrsrvkm             0666   system     system
+/dev/video0               0660   system     camera
+/dev/video1               0660   system     camera
+/dev/video2               0660   system     camera
+/dev/s3c-jpg              0660   system     camera
+/dev/s3c-mem              0660   system     system
+/dev/s3c-mfc              0660   media      media
+
+# latin Mobile TV
+/dev/dmb                  0660   system     system
+/dev/s3c-tsi              0660   system     system
+
+# TV Out
+/dev/video14              0660   system     graphics
+/dev/video21              0660   system     graphics
+/dev/video22              0660   system     graphics
+
+# for ddc
+/dev/i2c-1                0660   system     graphics
+
+# more i2c stuff
+/dev/i2c-5                0660   root       input
+/dev/i2c-6                0660   root       input
+/dev/i2c-10               0660   root       input
+
+# for radio interface
+/dev/onedram              0660   radio      radio
+/dev/modem_ctl            0660   radio      radio
+/dev/modem_fmt            0660   radio      radio
+/dev/modem_rfs            0660   radio      radio
+/dev/s3c2410_serial3      0660   radio      radio
+/dev/block/mtdblock4      0660   radio      radio
+/dev/mtd/mtd4ro           0660   radio      radio
+
+# network
+/dev/dun                  0600   system     system
+/dev/ttyGS0               0600   system     system
+
+# for Sensor HAL
+/dev/akm8973              0660   system     system
+/dev/accelerometer        0660   system     system
+/dev/l3g4200d             0660   system     system
+
+/sys/devices/virtual/BMA-dev/accelerometer   calibration               0660 system system
+/sys/devices/virtual/lightsensor/switch_cmd  lightsensor_file_cmd      0660 system system
+
+# general inputs properties
+/sys/devices/virtual/input/input*   enable      0660  root  input
+/sys/devices/virtual/input/input*   delay       0660  root  input
+/sys/devices/virtual/input/input*   poll_delay  0660  root  input
+
+# for GPS
+/dev/s3c2410_serial1      0600   gps        gps
+
+# for bluetooth
+/dev/s3c2410_serial0      0660   bluetooth  net_bt_stack
+
+# for mtp
+/dev/usb_mtp_gadget       0664   system     system
+/dev/usb_accessory        0664    system    system
+/dev/mtp_usb              0664    system    system
+
+# serial console aka s3c2310_serial2 uart in old kernel
+/dev/ttyFIQ0              0600   root       root
+
+# power hal - governors - interactive
+/sys/devices/system/cpu/cpufreq interactive/above_hispeed_delay      0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/boost                    0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/boostpulse               0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/go_hispeed_load          0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/hispeed_freq             0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/input_boost              0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/min_sample_rate          0664    system  system
+/sys/devices/system/cpu/cpufreq interactive/timer_rate               0664    system  system
+
+# power hal - governors - ondemand
+/sys/devices/system/cpu/cpufreq ondemand/boostfreq                   0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/boostpulse                  0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/ignore_nice_load            0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/io_is_busy                  0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/powersave_bias              0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/sampling_down_factor        0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/sampling_rate               0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/sampling_rate_min           0664    system  system
+/sys/devices/system/cpu/cpufreq ondemand/up_threshold                0664    system  system
+
+# cpufreq
+/sys/devices/system/cpu/cpu* cpufreq/UV_mV_table                     0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/affected_cpus                   0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/cpuinfo_cur_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/cpuinfo_max_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/cpuinfo_min_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/cpuinfo_transition_latency      0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/related_cpus                    0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_available_frequencies   0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_available_governors     0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_cur_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_driver                  0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_governor                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_max_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_min_freq                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/scaling_setspeed                0664    system  system
+/sys/devices/system/cpu/cpu* cpufreq/stats                           0664    system  system
