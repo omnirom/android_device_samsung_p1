@@ -1,0 +1,14 @@
+# mount point	fstype		device			options (length for cryptfs encryption footer)
+/boot			mtd		boot
+/recovery		mtd		recovery
+/radio			mtd		radio
+/system			ext4		/dev/lvpool/system	flags=backup=1;canbewiped;wipeingui
+/cache			yaffs2		cache			flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
+/data			f2fs		/dev/lvpool/userdata	flags=backup=1;length=-16384;fsflags="inline_xattr";canbewiped;wipeingui;removable
+/external_sd		vfat		/dev/block/mmcblk1p1	flags=display="Micro SDCard";storage;wipeingui;removable
+
+# raw partitions
+/raw_sd			vfat		/dev/block/mmcblk0p1	flags=wipeingui;removable
+/raw_data		ext4		/dev/block/mmcblk0p2	flags=wipeingui;removable
+/raw_cache		ext4		/dev/block/mmcblk0p3	flags=wipeingui;removable
+
