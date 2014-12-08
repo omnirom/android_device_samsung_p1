@@ -1,34 +1,36 @@
-import init.p1-common.rc
-import init.p1.usb.rc
+# Init for devices built on Samsung Galaxy Tab P1000 platform
+# GSM Variants
+
+import /init.p1-common.rc
+import /init.p1.usb.rc
 
 on init
 
     loglevel 9
 
-    mkdir /storage 0550 system sdcard_r
-    mkdir /storage/sdcard0 0555 root root
+    chmod 0775 /mnt/media_rw
+    chown root root /mnt/media_rw
+    mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage 0775 system sdcard_r
+    mkdir /storage/emulated 0775 root root
     mkdir /storage/sdcard1 0775 system system
-    mkdir /mnt/media_rw/sdcard0 0775 system system
     mkdir /mnt/media_rw/sdcard1 0775 system system
 
-    export EXTERNAL_STORAGE /storage/sdcard0
+    export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1
+    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    export EMULATED_STORAGE_TARGET /storage/emulated
 
-    # for backwards compatibility
-    symlink /storage/sdcard0 /sdcard
-    symlink /storage/sdcard0 /mnt/sdcard
+#   support legacy paths
+    symlink /storage/emulated/legacy /sdcard
+    symlink /storage/emulated/legacy /mnt/sdcard
+    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
     symlink /storage/sdcard1 /external_sd
     symlink /storage/sdcard1 /mnt/external_sd
 
-    mkdir /datadata 0771 system system
-
-    # FIXME: Market checks this variable for space-checking
-    #        but downloads to /datadata
-
-    export DOWNLOAD_CACHE /data/download
-
-    # we will create our own ril-daemon service in class 'core' because the
-    # rild doesn't like being killed. (During device encryption.)
+#   we will create our own ril-daemon service in class 'core' because the
+#   rild doesn't like being killed. (During device encryption.)
     stop ril-daemon
 
 on boot
@@ -38,113 +40,76 @@ on boot
 
 on fs
 
-    # set up lvm volumes
+#   set up lvm volumes
     exec /lvm/sbin/lvm vgscan --mknodes --ignorelockingfailure
     exec /lvm/sbin/lvm vgchange -aly --ignorelockingfailure
-    restorecon /dev/mapper/lvpool-system
-    restorecon /dev/mapper/lvpool-userdata
+    restorecon_recursive /dev/mapper
 
     mkdir /radio 0775 radio radio
     mount yaffs2 mtd@radio /radio
-    mount yaffs2 mtd@datadata /datadata
-    mount yaffs2 mtd@cache /cache
+    mount yaffs2 mtd@cache /cache nosuid nodev
 
     mount_all  fstab.p1
+    swapon_all fstab.p1
+
+    setprop ro.crypto.fuse_sdcard true
 
     chown radio radio /radio/modem.bin
-    exec /system/bin/restorecon -r /radio
+    restorecon_recursive /radio
 
-    # set permissions for files in /efs
+#   set permissions for files in /efs
     mkdir /efs 0775 radio radio
     mount yaffs2 mtd@efs /efs
     chown radio radio /efs
     chmod 770 /efs
     chmod 770 /efs/imei
-    exec /system/bin/restorecon -r /efs
+    restorecon_recursive /efs
 
-    # set permissions for files in /radio
+#   set permissions for files in /radio
     chown radio radio /radio/modem.bin
 
-    # permission for tuning knobs
+#   permission for tuning knobs
     chown system system /sys/class/misc/pwm_duty/pwm_duty
     chmod 660 /sys/class/misc/pwm_duty/pwm_duty
     restorecon /sys/class/misc/pwm_duty/pwm_duty
 
-    # intentionally left world-writable for Voodoo Sound app
-    restorecon /sys/devices/virtual/misc/voodoo_sound/adc_osr128
-    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_direct
-    restorecon /sys/devices/virtual/misc/voodoo_sound/dac_osr128
-    restorecon /sys/devices/virtual/misc/voodoo_sound/debug_log
-    restorecon /sys/devices/virtual/misc/voodoo_sound/digital_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/fll_tuning
-    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_normalize_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_bass
-    restorecon /sys/devices/virtual/misc/voodoo_sound/fm_radio_headset_restore_highs
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_amplifier_level
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b1_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b2_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b3_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b4_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_b5_gain
-    restorecon /sys/devices/virtual/misc/voodoo_sound/headphone_eq_bands_values
-    restorecon /sys/devices/virtual/misc/voodoo_sound/mono_downmix
-    restorecon /sys/devices/virtual/misc/voodoo_sound/recording_preset
-    restorecon /sys/devices/virtual/misc/voodoo_sound/speaker_tuning
-    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion
-    restorecon /sys/devices/virtual/misc/voodoo_sound/stereo_expansion_gain
+#   intentionally left world-writable for Voodoo Sound app
+    restorecon_recursive /sys/devices/virtual/misc/voodoo_sound
 
 on post-fs
 
-    chown system system /datadata
-    chmod 0771 /datadata
-    restorecon /datadata
-
-    # symlink for samsung ril
+#   symlink for samsung ril
     symlink /radio/modem.bin /dev/block/bml12
 
 on post-fs-data
 
-    # ------
-    # COMMENT eaut: some of the permission settings might qualify for p1-common
-    #
-    # actually all the permission lines could be moved to ueventd.<hw>.rc
-    # since ueventd.rc has no "import" logic we need additional makefile glue to
-    # have all common stuff in p1-common and just the device specific stuff in p1/p1c
+#   remap this as internal sdcard with the sdcard fuse tool
+    mkdir /data/media 0775 media_rw media_rw
+    chown media_rw media_rw /data/media
 
-    # for migrating download provider's cache out of the small /data/data
-    mkdir /data/data2 0771 system system
-
-    # download cache
-    mkdir /data/download 0770 system cache
-
-    # logs
+#   logs
     mkdir /data/log 0775 root root
     chmod 0775 /data/log
 
-    # setup datadata
-    exec /sbin/setupdatadata.sh
-
-    # gps P1 only
+#   gps P1 only
     chown gps root /sys/class/sec/gps/GPS_PWR_EN/value
     chmod 660 /sys/class/sec/gps/GPS_PWR_EN/value
     chown gps root /sys/class/sec/gps/GPS_nRST/value
     chmod 660 /sys/class/sec/gps/GPS_nRST/value
 
-    # sensors P1 only
-    # this needs to be fixed correctly
-    # see: frameworks/base/services/sensorservice/SensorDevice.cp
-    write /sys/class/input/input5/enable 1  # enable lightsensor-level
+#   sensors P1 only
+#   enable lightsensor-level
+    write /sys/class/input/input5/enable 1
 
-    # system server can control backlight brightness
+#   system server can control backlight brightness
     chmod 0664 /sys/class/lcd/s5p_lcd/lcd_power
     chown system system /sys/class/lcd/s5p_lcd/lcd_power
 
-    # allow net_raw to have access to /dev/socket directory
+#   allow net_raw to have access to /dev/socket directory
     chown root net_raw /dev/socket
     chmod 0775 /dev/socket
 
-    # permission changes
+#   permission changes
     chown system radio /sys/devices/platform/s3c2440-i2c.2/i2c-2/2-004a/update_fw
     chown system radio /sys/class/power_supply/battery/reset_soc
     chown system radio /sys/class/power_supply/battery/reset_cap
@@ -160,7 +125,7 @@ on post-fs-data
     chown system radio /sys/class/mdnieset_ui/switch_mdnieset_ui/mdnieset_region_file_cmd
     chown system radio /sys/class/mdnieset_outdoor/switch_mdnieset_outdoor/mdnieset_outdoor_file_cmd
 
-    # usb permission settings
+#   usb permission settings
     chmod 0664 /sys/devices/virtual/sec/switch/disable_vbus
     chmod 0664 /sys/devices/virtual/sec/switch/usb_state
     chmod 0664 /sys/devices/virtual/sec/switch/usb_sel
@@ -183,17 +148,18 @@ on post-fs-data
     chown system radio /sys/devices/platform/android_usb/AskOnStatus
     chown system radio /sys/devices/platform/android_usb/AskOnMenuSel
 
+    setprop vold.post_fs_data_done 1
+
 service gpsd /system/vendor/bin/gpsd -c /system/vendor/etc/gps.xml
     class main
     socket gps seqpacket 0660 gps system
     user gps system
     group system inet
 
-# FUSE sdcard daemon for rich permissions (runs as media_rw)
-service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard0 /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
-    disabled
 
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
     disabled
