@@ -37,13 +37,14 @@
     <bool name="config_voice_capable">true</bool>
 
     <!--Boolean to enable stk functionality on Samsung devices-->
-    <bool name="config_samsung_stk">true</bool>
+    <!-- bool name="config_samsung_stk">true</bool -->
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          USB interfaces.  If the device doesn't want to support tething over USB this should
          be empty.  An example would be "usb.*" -->
     <string-array translatable="false" name="config_tether_usb_regexs">
-        <item>"rndis0"</item>
+        <item>"usb\\d"</item>
+        <item>"rndis\\d"</item>
     </string-array>
 
     <!-- SD card is hot-pluggable on this device variant -->
