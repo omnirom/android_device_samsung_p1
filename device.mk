@@ -32,10 +32,13 @@
 # This is the hardware-specific overlay, which points to the location
 # of hardware-specific resource overrides, typically the frameworks and
 # application settings that are stored in resourced.
-DEVICE_PACKAGE_OVERLAYS := device/samsung/p1/overlay
+DEVICE_PATH := device/samsung/p1
+DEVICE_ROOTDIR := $(DEVICE_PATH)/rootdir
+COMMON_ROOTDIR := $(DEVICE_PATH)-common/rootdir
+DEVICE_PACKAGE_OVERLAYS := $(DEVICE_PATH)/overlay
 
 # Inherit device configuration common between GSM & CDMA products.
-$(call inherit-product, device/samsung/p1-common/device_base.mk)
+$(call inherit-product, $(DEVICE_PATH)-common/device_base.mk)
 
 # Inherit VENDOR blobs and configuration.
 # There are two variants of the half that deals with the unavailable drivers: one
@@ -51,17 +54,17 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # P1 Init files
 PRODUCT_COPY_FILES += \
-    device/samsung/p1/rootdir/init.p1.rc:root/init.p1.rc \
-    device/samsung/p1-common/rootdir/ueventd.rc:root/ueventd.p1.rc \
-    device/samsung/p1-common/rootdir/init.recovery.rc:root/init.recovery.p1.rc \
-    device/samsung/p1/rootdir/init.p1.usb.rc:root/init.p1.usb.rc \
-    device/samsung/p1/rootdir/init.p1.usb.rc:recovery/root/usb.rc \
-    device/samsung/p1/fstab.p1:root/fstab.p1 \
-    device/samsung/p1/p1ln.sh:p1ln.sh
+    $(DEVICE_ROOTDIR)/init.p1.rc:root/init.p1.rc \
+    $(DEVICE_ROOTDIR)/init.p1.usb.rc:root/init.p1.usb.rc \
+    $(DEVICE_ROOTDIR)/fstab.p1:root/fstab.p1 \
+    $(DEVICE_ROOTDIR)/p1ln.sh:p1ln.sh \
+    $(COMMON_ROOTDIR)/ueventd.rc:root/ueventd.p1.rc
 
 # TWRP
 PRODUCT_COPY_FILES += \
-    device/samsung/p1/twrp.fstab:recovery/root/etc/twrp.fstab
+    $(DEVICE_ROOTDIR)/init.p1.usb.rc:recovery/root/usb.rc \
+    $(DEVICE_ROOTDIR)/twrp.fstab:recovery/root/etc/twrp.fstab \
+    $(COMMON_ROOTDIR)/init.recovery.rc:root/init.recovery.p1.rc
 
 # RIL
 # Permissions
@@ -80,8 +83,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.call_ring.delay=3000 \
     ro.telephony.call_ring.absent=true \
-    mobiledata.interfaces=pdp0,wlan0,gprs \
-    ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
+    mobiledata.interfaces=pdp0,gprs,rmnet0,rmnet1 \
+    ro.telephony.ril.config=icccardstatus,datacall,signalstrength,facilitylock \
     ro.ril.hsxpa=1 \
     ro.ril.gprsclass=10 \
     ro.adb.qemud=1 \
