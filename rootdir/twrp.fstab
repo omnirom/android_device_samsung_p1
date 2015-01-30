@@ -4,8 +4,8 @@
 /radio			mtd		radio
 /system			ext4		/dev/lvpool/system	flags=backup=1;canbewiped;wipeingui
 /cache			yaffs2		cache			flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
-/data			f2fs		/dev/lvpool/userdata	flags=backup=1;length=-16384;fsflags="inline_xattr";canbewiped;wipeingui;removable
-/external_sd		vfat		/dev/block/mmcblk1p1	flags=display="Micro SDCard";storage;wipeingui;removable
+/data			ext4	/dev/lvpool/userdata	length=-16384	flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
+/external_sd	vfat		/dev/block/mmcblk1p1	flags=display="Micro SDCard";storage;wipeingui;removable
 
 # raw partitions
 /raw_sd			vfat		/dev/block/mmcblk0p1	flags=wipeingui;removable

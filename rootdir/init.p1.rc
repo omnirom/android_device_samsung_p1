@@ -38,6 +38,7 @@ on fs
     exec /lvm/sbin/lvm vgscan --mknodes --ignorelockingfailure
     exec /lvm/sbin/lvm vgchange -aly --ignorelockingfailure
     restorecon /dev/mapper/lvpool-system
+    restorecon /dev/mapper/lvpool-swap
     restorecon /dev/mapper/lvpool-userdata
 
     mkdir /radio 0775 radio radio
@@ -45,6 +46,7 @@ on fs
     mount yaffs2 mtd@cache /cache nosuid nodev
 
     mount_all  fstab.p1
+    swapon_all fstab.p1
 
     setprop ro.crypto.fuse_sdcard true
 
