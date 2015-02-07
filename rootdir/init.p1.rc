@@ -99,6 +99,40 @@ on post-fs
 #   symlink for samsung ril
     symlink /radio/modem.bin /dev/block/bml12
 
+on charger
+
+#   set up lvm volumes
+    exec /lvm/sbin/lvm vgscan --mknodes --ignorelockingfailure
+    exec /lvm/sbin/lvm vgchange -aly --ignorelockingfailure
+    restorecon /dev/mapper/lvpool-system
+    restorecon /dev/mapper/lvpool-userdata
+
+    mount tmpfs tmpfs /tmp
+    mount ext4 /dev/lvpool/system /system
+
+    mkdir /data/log 0777
+    chmod 0666 /dev/log/radio
+    chmod 0666 /dev/log/main
+    chmod 0666 /dev/log/event
+    chmod 0775 /p1_charger
+
+#   set cpu governor to powersave while in charging mode
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
+
+    class_start default
+
+service debuggerd /system/bin/debuggerd
+
+service ueventd /sbin/ueventd
+    critical
+
+service console /system/bin/sh
+    console
+
+service charger /p1_charger
+    critical
+    seclabel u:r:p1_charger:s0
+
 on post-fs-data
 
 #   remap this as internal sdcard with the sdcard fuse tool
