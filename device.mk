@@ -94,7 +94,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     rild.libpath=/system/lib/libsec-ril.so \
     rild.libargs=-d/dev/ttyS0 \
     ro.phone_storage=1 \
-    ro.additionalmounts=/storage/sdcard1
+    ro.additionalmounts=/storage/sdcard1 \
+    ro.sys.fw.bg_apps_limit=16
 
 # Set here product definitions that valid for all p1 products
 PRODUCT_BRAND := Samsung
