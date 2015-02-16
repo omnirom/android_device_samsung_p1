@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+# low ram device
+TARGET_LOW_RAM_DEVICE := true
+
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/samsung/aries
 TARGET_KERNEL_CONFIG := omni_p1_defconfig
