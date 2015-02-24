@@ -2,13 +2,9 @@
 /boot			mtd		boot
 /recovery		mtd		recovery
 /radio			mtd		radio
-/system			ext4		/dev/lvpool/system	flags=backup=1;canbewiped;wipeingui
-/cache			yaffs2		cache			flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
-/data			auto		/dev/lvpool/userdata	length=-16384	flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
-/external_sd	vfat		/dev/block/mmcblk1p1	flags=display="Micro SDCard";storage;wipeingui;removable
-
-# raw partitions
-/raw_sd			vfat		/dev/block/mmcblk0p1	flags=wipeingui;removable
-/raw_data		ext4		/dev/block/mmcblk0p2	flags=wipeingui;removable
-/raw_cache		ext4		/dev/block/mmcblk0p3	flags=wipeingui;removable
-
+/cache			yaffs2	cache					flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
+/system			ext4	/dev/lvpool/system		flags=backup=1;canbewiped;wipeingui
+/datadata		yaffs2	datadata				flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
+/data			auto	/dev/lvpool/userdata	length=-16384	flags=backup=1;canbewiped;wipeingui;wipeduringfactoryreset
+/sdcard			vfat	/dev/block/mmcblk0p1	flags=display="Internal SD Card";storage;wipeingui;settingsstorage
+/external_sd	vfat	/dev/block/mmcblk1p1	flags=display="External SD Card";storage;wipeingui;removable
