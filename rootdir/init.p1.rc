@@ -6,26 +6,29 @@ import /init.p1.usb.rc
 
 on init
 
-    chmod 0701 /mnt/media_rw
-    chown root root /mnt/media_rw
-    mkdir /mnt/shell/emulated 0700 shell shell
+    loglevel 9
+
     mkdir /storage 0550 system sdcard_r
-    mkdir /storage/emulated 0555 root root
+    mkdir /storage/sdcard0 0555 root root
     mkdir /storage/sdcard1 0775 system system
+    mkdir /mnt/media_rw/sdcard0 0775 system system
     mkdir /mnt/media_rw/sdcard1 0775 system system
 
-    export EXTERNAL_STORAGE /storage/emulated/legacy
+    export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
-    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    export EMULATED_STORAGE_TARGET /storage/emulated
 
-#   support legacy paths
-    symlink /storage/emulated/legacy /sdcard
-    symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+#   for backwards compatibility
+    symlink /storage/sdcard0 /sdcard
+    symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard1 /external_sd
     symlink /storage/sdcard1 /mnt/external_sd
+
+    mkdir /datadata 0771 system system
+
+#   FIXME: Market checks this variable for space-checking
+#          but downloads to /datadata
+
+    export DOWNLOAD_CACHE /data/download
 
 on boot
 
@@ -38,17 +41,15 @@ on fs
     exec /lvm/sbin/lvm vgscan --mknodes --ignorelockingfailure
     exec /lvm/sbin/lvm vgchange -aly --ignorelockingfailure
     restorecon /dev/mapper/lvpool-system
-    restorecon /dev/mapper/lvpool-swap
     restorecon /dev/mapper/lvpool-userdata
 
     mkdir /radio 0775 radio radio
     mount yaffs2 mtd@radio /radio
+    mount yaffs2 mtd@datadata /datadata
     mount yaffs2 mtd@cache /cache nosuid nodev
 
     mount_all  fstab.p1
     swapon_all fstab.p1
-
-    setprop ro.crypto.fuse_sdcard true
 
     chmod 0775 /radio
     chown radio radio /radio/modem.bin
@@ -135,13 +136,12 @@ service charger /p1_charger
 
 on post-fs-data
 
-#   remap this as internal sdcard with the sdcard fuse tool
-    mkdir /data/media 0775 media_rw media_rw
-    chown media_rw media_rw /data/media
-
 #   logs
     mkdir /data/log 0775 root root
     chmod 0775 /data/log
+
+#   setup datadata
+    exec /sbin/setupdatadata.sh
 
 #   gps P1 only
     chown gps root /sys/class/sec/gps/GPS_PWR_EN/value
@@ -212,10 +212,11 @@ service gpsd /system/vendor/bin/gpsd -c /system/vendor/etc/gps.xml
     group system inet
     seclabel u:r:gpsd:s0
 
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard0 /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
+# FUSE sdcard daemon for rich permissions (runs as media_rw)
+service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
     class late_start
+    disabled
 
-service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
     disabled
