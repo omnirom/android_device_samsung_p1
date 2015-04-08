@@ -15,8 +15,8 @@
 # limitations under the License.
 #
 
-# low ram device
-TARGET_LOW_RAM_DEVICE := true
+# exclude live wallpapers
+TARGET_EXCLUDE_LIVEWALLPAPERS := true
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/samsung/aries
@@ -29,7 +29,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, vendor/omni/config/gsm.mk)
 
 # bootanimation
-TARGET_BOOTANIMATION_SIZE := 420x280
+TARGET_BOOTANIMATION_SIZE := 480x320
 
 # Inherit from our custom product configuration
 $(call inherit-product, vendor/omni/config/common_tablet.mk)
