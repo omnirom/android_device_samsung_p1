@@ -25,6 +25,9 @@ BOARD_CUSTOM_BOOTIMG_MK := device/samsung/p1/shbootimg.mk
 TARGET_RECOVERY_FSTAB := device/samsung/p1/rootdir/fstab.p1
 TARGET_OTA_ASSERT_DEVICE := GT-P1000,GT-P1000L,GT-P1000N,galaxytab,p1,p1l,p1n,p1ln
 
+# Vold
+BOARD_USES_MULTIPLE_SDCARD_FS := true
+
 # TWRP
 TW_EXTERNAL_STORAGE_PATH := "/external_sd"
 TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
